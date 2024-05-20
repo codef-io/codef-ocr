@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="pragma" content="no-cache" />
+    <meta http-equiv="expires" content="0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0"
+    />
+    <link type="text/css" rel="stylesheet" href="/css/index.css" />
+    <title>OCR Demo</title>
+  </head>
+
+  <body>
+    <div class="app">
+      <div class="sub_text">
+        <span>OCR System</span>
+      </div>
+      <div class="container">
+        <div class="progress-container">
+          <div class="progress" id="progress"></div>
+          <div class="circle active">
+            1
+            <span class="circle-text">준비</span>
+          </div>
+          <div class="circle">
+            2
+            <span class="circle-text">진행</span>
+          </div>
+          <div class="circle">
+            3
+            <span class="circle-text">결과</span>
+          </div>
+        </div>
+      </div>
+      <div class="menu-grid">
+        <div class="menu_txt">
+          <span>STEP 1</span>
+          <img src="./images/hand1.png" />
+          <span>ocr 종류를 선택해주세요.</span>
+        </div>
+        <div class="menu_txt2">
+          <span>STEP 2</span>
+          <img src="./images/ocr.png" />
+          <span
+            >대상을 가이드 영역 안에 맞추고 반사광을 최소화하여 촬영해주세요.</span
+          >
+        </div>
+      </div>
+      <div class="contents">
+        <div class="contents-section start-section">
+          <button id="idcard" class="btn">
+            <img src="./images/idcard_image.png" />
+          </button>          
+          <div id="ocr_select" style="border: 0px; position: fixed; bottom: 15%;">
+            <label style="display: block;">
+              <input type="radio" value="1" name="ocr_select"> 주민등록증
+            </label>
+            <label style="display: block;">
+              <input type="radio" value="2" name="ocr_select"> 운전면허증
+            </label>
+            <label style="display: block;">
+              <input type="radio" value="3" name="ocr_select"> 여권
+            </label>
+            <label style="display: block;">
+              <input type="radio" value="4" name="ocr_select"> 외국인등록증
+            </label>
+            <label style="display: block;">
+              <input type="radio" value="5" name="ocr_select"> 외국인등록증 후면
+            </label>
+          </div>
+          <button id="start_btn" class="btn2">
+            <span>시작하기</span>
+          </button>
+        </div>
+
+        <div id="webcamera_container" class="contents-section camera-section">
+          <p class="title"></p>
+        </div>
+        <div class="contents-section result-section">
+          <div id="title_text"></div>
+          <div id="imageContainer"></div>
+          <div id="result_text"></div>
+          <div class="btn-area">
+            <button id="retry_btn" class="btn2">
+              <span>재촬영</span>
+            </button>
+            <button id="back_btn" class="btn2">
+              <span>되돌아가기</span>
+            </button>
+          </div>
+        </div>        
+        <button id="cap_btn" class="btn3">
+          <div class="inner-circle"></div>
+        </button>        
+      </div>
+    </div>
+
+    <script src="js/adapter-latest.js"></script>
+    <script src="js/mobile-detect.min.js"></script>    
+
+    <script type="module" defer>
+      import KoiOcr from "./js/koiOcr.js";
+      import {
+        KOI_OCR_EVENT,
+        OCR_TYPE,
+        getOcrTypeFromButtonId,
+        buttonIds,
+        activateCircle,
+        rtcType,
+        ocrResultFormat,
+      } from "./js/koiOcr.js";
+
+      let koiOcr = null;
+      let currentOcrType = null;
+      let titleEl;
+      let initialState;
+      let startBtn, captureBtn, retryBtn, backBtn;
+      let useCapOcr = true;
+      let currentActive = 1;
+      let imageDataURL;
+
+      
+
+      function registerEventListeners() {
+        buttonIds.forEach((buttonId) => {
+          const button = document.querySelector(`#${buttonId}`);
+          if (button) {
+            button.addEventListener("click", (event) => {
+              const ocrType = getOcrTypeFromButtonId(buttonId);
+              startOcr(ocrType);
+              currentActive = 3;
+              update();
+            });
+          }
+        });
+
+        startBtn = document.querySelector("#start_btn");
+        if (startBtn) {
+          // startBtn 클릭 이벤트 리스너
+          startBtn.addEventListener("click", (event) => {
+            // 버튼이 하나만 남아있는지 확인
+            const buttons = document.querySelectorAll(".btn");
+            if (buttons.length === 1) {
+              // 남은 버튼이 있을 때 클릭 이벤트를 발생시킴
+              buttons[0].click();
+              // currentActive를 업데이트
+              currentActive = 2;
+              // 타입 넘겨줌
+              koiOcr._ocrType = document.querySelector('input[type=radio][name=ocr_select]:checked').value;
+              // 프로그래스 바 업데이트
+              update();
+            } else {
+              // 버튼이 하나가 아닌 경우 startBtn 클릭 이벤트 처리
+              const menu_txt = document.querySelector(".menu_txt");
+              const menu_txt2 = document.querySelector(".menu_txt2");
+              const buttons = document.querySelectorAll(".btn");
+              menu_txt.style.display = "none";
+              menu_txt2.style.display = "none";
+              startBtn.style.display = "none";
+              buttons.forEach((button) => {
+                button.style.display = "block";
+              });
+              currentActive = 2;
+              update();
+            }
+          });
+        }
+
+        captureBtn = document.querySelector("#cap_btn");
+        if (captureBtn) {
+          captureBtn.addEventListener("click", (event) => {
+            koiOcr.capture();
+            // koiOcr.dispatchEvent(new CustomEvent("capture"));
+            const titleEl = document.querySelector(".title");
+            activateCircle(1);
+            titleEl.innerHTML = "";
+            if (currentOcrType == 7) {
+              // titleEl.innerHTML =
+                // "포인터를 움직여서 문서 영역 모서리에 맞추고 아래 버튼을 눌러 교정을 시작해주세요.";
+            } else {
+              titleEl.innerText = "ocr 진행중입니다.\n잠시만 기다려주세요.";
+            }
+            captureBtn.style.display = "none";
+            currentActive = 4;
+            update();
+          });
+        }
+
+        retryBtn = document.querySelector("#retry_btn");
+        if (retryBtn) {
+          retryBtn.addEventListener("click", (event) => {
+            const kwcGuideArea = document.getElementById("kwcGuideArea");
+            titleEl.innerHTML = "";
+            if (currentOcrType) {
+              startOcr(currentOcrType);
+            }
+            activateCircle(3);
+            currentActive = 3;
+            update();
+            kwcGuideArea.style.zIndex = "10001";
+          });
+        }
+
+        backBtn = document.querySelector("#back_btn");
+        if (backBtn) {
+          backBtn.addEventListener("click", (event) => {
+            const buttons = document.querySelectorAll(".btn");
+            const kwcGuideArea = document.getElementById("kwcGuideArea");
+            const pgTexts = document.querySelectorAll(".circle-text");
+
+            changeContentViewStack("start");
+            startBtn.style.display = "block";
+            buttons.forEach((button) => {
+              button.style.display = "none";
+            });
+            currentActive = 1;
+            update();
+            activateCircle(3);
+            kwcGuideArea.style.zIndex = "10001";
+            pgTexts.forEach((pgText) => {
+            pgText.style.bottom = "";
+            pgText.style.top = "";
+          });
+          });
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", async () => {        
+
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+          titleEl = document.querySelector("#title_text");
+          try {
+            changeContentViewStack("start");
+
+            // Option
+            const koiOcrOptions = {
+              useWebCamera: true,
+              cameraOptions: {
+                window: window,
+                containerId: "#webcamera_container",
+                useRtc: true, // webRtc 촬영 여부                
+                useCapOcr: rtcType.MANUAL, // wevRtc 촬영 옵션(AUTO: 자동촬영, MANUAL: 수동 촬영, FILE: 파일 업로드)
+              },              
+              ocrType: "1", // 타입 미선택시 1으로 픽스 
+              ocrWorkerJs : "js/ocrWorkerDemo.js",         
+            };
+
+            koiOcr = new KoiOcr(koiOcrOptions);
+            // 카메라 초기화를 명시적으로 호출
+            await koiOcr.init();
+            initialState = document.body.innerHTML;
+            registerEventListeners();
+
+            koiOcr.addEventListener(KOI_OCR_EVENT.READY, ocrReadyHandler);
+            koiOcr.addEventListener(KOI_OCR_EVENT.PROGRESS, ocrProgressHandler);
+            koiOcr.addEventListener(KOI_OCR_EVENT.RESULT, ocrResultHandler); //결과값
+            koiOcr.addEventListener(
+              KOI_OCR_EVENT.CAMERA_STARTED,
+              ocrCameraStartedHandler
+            );
+            koiOcr.addEventListener(KOI_OCR_EVENT.CAPTURE, capturedHandler);
+          } catch (err) {
+            console.error(err);
+          }
+        }
+      });
+
+      window.addEventListener("coordinatesOutOfRange", function () {
+        const retryBtn = document.querySelector("#retry_btn");
+        retryBtn.click();''
+        changeContentViewStack("camera");
+      });
+
+      const ocrReadyHandler = (event) => {
+        //TODO 촬영버튼 활성화.
+      };
+
+      const ocrProgressHandler = (event) => {
+        //TODO 진행상황 업데이트
+      };
+
+      const capturedHandler = (event) => {
+        //TODO 진행상황 업데이트
+      };
+
+      const ocrResultHandler = (event) => {
+        changeContentViewStack("result");
+        activateCircle(1);
+        currentActive = 5;
+        update();
+        const titleEl = document.querySelector("#title_text");
+        const result_text = document.querySelector("#result_text");
+        const imageContainer = document.querySelector("#imageContainer");
+        const retryBtn = document.querySelector("#retry_btn");
+        const pointerBtn = document.querySelector("#pointerBtn");
+        const pgTexts = document.querySelectorAll(".circle-text");
+
+        let imageDataURL;
+
+        
+        result_text.style.height = "30%";
+        const canvas = document.createElement("canvas");
+        canvas.width = event.detail.imageData.width;
+        canvas.height = event.detail.imageData.height;
+        const context = canvas.getContext("2d");
+        context.putImageData(event.detail.imageData, 0, 0);
+
+        // Canvas를 이미지로 변환하여 표시
+        imageDataURL = canvas.toDataURL("image/jpeg");         
+
+        if (titleEl) {
+          if (
+            event.detail.ocrResult &&
+            event.detail.ocrResult.resultJSON.result.code === "CF-00000"
+          ) {
+            titleEl.innerHTML = "";
+            result_text.innerHTML = JSON.stringify(event.detail.ocrResult.resultJSON.data);
+            imageContainer.innerHTML = `<img src="${imageDataURL}">`;
+            
+          } else {
+            titleEl.innerHTML = "";
+            result_text.innerHTML = JSON.stringify(event.detail.ocrResult.resultJSON.result);
+            imageContainer.innerHTML = `<img src="${imageDataURL}">`;
+          }
+        } else {
+          console.error(
+            "Result element is null. Check if #title_text exists in your HTML."
+          );
+        }        
+        retryBtn.style.display = "block";
+        backBtn.style.display = "block";
+        captureBtn.style.display = "none";
+      };
+
+      const startOcr = async (ocrType) => {
+        try {
+          currentOcrType = ocrType;
+          const elementsToHide = document.querySelectorAll(
+            ".sub_text, .ocr_txt, .menu_txt, .menu_txt2"
+          );
+
+          const titleEl = document.querySelector(".title");
+          if (koiOcr.useWebCamera) {
+            const useweb = KoiOcr.useWebCamera;
+            await koiOcr.changeOcrType(ocrType);
+            elementsToHide.forEach((element) => {
+              element.style.display = "none";
+            });
+            koiOcr.runCamera();
+            titleEl.innerText =
+              "가이드 영역에 최대한 맞추어 \n기울임 없이 정면으로 촬영해주세요.";
+            const rtcOptions = koiOcr._options.cameraOptions.useCapOcr;
+            if (rtcOptions == 2) {
+              if (captureBtn) {
+                captureBtn.style.display = "block";
+                captureBtn.style.position = "absolute";
+              }
+            } else if (rtcOptions == 3) {
+              // 파일 업로드 처리
+            }
+          } else {
+            console.error("WebCamera is disabled.");
+            alert("WebCamera is disabled.");
+          }
+        } catch (error) {
+          // 토큰&라이선스 예외처리
+          const errObject = JSON.parse(error.message);
+          console.log("errObject: ", errObject);
+          console.log("startOcr error code : ", errObject.code);
+          console.log("startOcr error message : ", errObject.message);
+          alert("Error : " + errObject.message);
+        }
+      };
+
+      const ocrCameraStartedHandler = (event) => {
+        changeContentViewStack("camera");
+      };
+
+      const changeContentViewStack = (sectionName) => {
+        const sectionList = document.querySelectorAll(".contents-section");
+        const elementsToShow = document.querySelectorAll(
+          ".sub_text, .ocr_txt, .menu_txt, .menu_txt2"
+        );
+        const button = document.querySelector("#card");
+        const pgTexts = document.querySelectorAll(".circle-text");
+        const kwcGuideArea = document.getElementById("kwcGuideArea");
+
+        for (let section of sectionList) {
+          section.style.display = "none";
+        }
+
+        let displayType = "block";
+        if (sectionName === "start") {
+          displayType = "flex";
+          elementsToShow.forEach((element) => {
+            element.style.display = "block";
+          });
+        }
+
+        if (sectionName === "camera") {
+          pgTexts.forEach((pgText) => {
+            pgText.style.bottom = "0px";
+            pgText.style.top = "-25px";
+          });
+          if (currentOcrType == 7) {
+            kwcGuideArea.style.zIndex = "10001";
+          } else {
+            kwcGuideArea.style.zIndex = "10003";
+          }
+        }
+
+        document.querySelector(`.${sectionName}-section`).style.display =
+          displayType;
+      };
+
+      const update = () => {
+        const progress = document.getElementById("progress");
+        const circles = document.querySelectorAll(".circle");
+        const progressWidth = (currentActive - 1) * 25 + "%";
+        progress.style.width = progressWidth;
+      };
+    </script>
+  </body>
+</html>
