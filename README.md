@@ -26,10 +26,10 @@ codef-ocr은 CODEF OCR API 호출을 테스트하는 샘플 코드입니다.
 ```
 
 #### 2. 로컬 서버 실행 후 모바일 브라우저를 통해 접속합니다.  
-<img src="https://github.com/codef-io/codef-ocr/assets/43339893/530a409e-8e92-4215-9d58-9f006d6e5aee" width="400" height="500">
+<div style="text-align: center"><img src="https://github.com/codef-io/codef-ocr/assets/43339893/530a409e-8e92-4215-9d58-9f006d6e5aee" width="400" height="500"></div> 
    
 #### 3. 신분증 종류 선택 후 시작하기 버튼을 클릭합니다.
-<img src="https://github.com/codef-io/codef-ocr/assets/43339893/e7d8ba89-26b7-4d29-ab69-952da149fd77" width="400" height="500">
+<div style="text-align: center"><img src="https://github.com/codef-io/codef-ocr/assets/43339893/e7d8ba89-26b7-4d29-ab69-952da149fd77" width="400" height="500"></div>
 
 #### 4. 노란 가이드선에 신분증을 맞춘 후 하단의 원 버튼을 클릭하여 촬영합니다.
 #### 5. Response Data를 확인합니다.
