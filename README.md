@@ -36,6 +36,8 @@ codef-ocr은 CODEF OCR API 호출을 테스트하는 샘플 코드입니다.
 
 
 # ETC
-WebRTC의 경우 개발 지원이 불가능하며  
+해당 샘플소스는 OCR 엔진업체에서 제공한 WebRTC 샘플을 활용 해 작성하였으며  
+WebRTC 소스에 대한 수정 및 개발 지원은 어렵습니다.    
+
 Reqeust 및 Response Data 등의 API 사용 문의는  
 [홈페이지 문의게시판](https://codef.io/#/cs/inquiry)에 등록 부탁드립니다.
