@@ -72,8 +72,21 @@
             </label>
           </div>
           <button id="start_btn" class="btn2">
-            <span>시작하기</span>
+            <span>촬영</span>
           </button>
+          <button id="upload_btn" class="btn2">
+            <span>파일</span>
+          </button>
+        </div>
+
+        <div id="upload_container" class="file-section">
+          <div id="image_area">
+            <img src=""/>
+          </div>
+          <div id="base64_area">
+            <textarea id="base64Image"></textarea>
+          </div>
+          <input type="file" id="fileUpload" accept="image/*"/>
         </div>
 
         <div id="webcamera_container" class="contents-section camera-section">
@@ -117,12 +130,30 @@
       let currentOcrType = null;
       let titleEl;
       let initialState;
-      let startBtn, captureBtn, retryBtn, backBtn;
+      let startBtn, captureBtn, retryBtn, backBtn, uploadBtn;
       let useCapOcr = true;
       let currentActive = 1;
       let imageDataURL;
 
-      
+
+      /** 파일 업로드해서 base64로 변환 */
+      const fileInput = document.getElementById("fileUpload");
+      const base64Text = document.getElementById("base64Image");
+      const imgArea = document.getElementById("image_area")
+      fileInput.onchange = () => {
+        const selectedFile = fileInput.files[0];
+        const fileName = selectedFile.name.split(".");
+        const reader = new FileReader();
+        reader.readAsDataURL(selectedFile)
+
+        base64Text.value = reader.result;
+        imgArea.src = "data:image/" + fileName[1] + ";base64," + reader.result;
+        console.log("data:image/" + fileName[1] + ";base64," + reader.result);
+      };
+      base64Text.onchange = () => {
+        // TODO : 기능 개발 필요
+      }
+
 
       function registerEventListeners() {
         buttonIds.forEach((buttonId) => {
@@ -138,6 +169,9 @@
         });
 
         startBtn = document.querySelector("#start_btn");
+        uploadBtn = document.querySelector("#upload_btn");
+        const webCameraContainer = document.querySelector("#webcamera_container");
+        const uploadContainer = document.querySelector("#upload_container");
         if (startBtn) {
           // startBtn 클릭 이벤트 리스너
           startBtn.addEventListener("click", (event) => {
@@ -160,6 +194,43 @@
               menu_txt.style.display = "none";
               menu_txt2.style.display = "none";
               startBtn.style.display = "none";
+              uploadBtn.style.display = "none";
+              uploadContainer.style.display = "none";
+              buttons.forEach((button) => {
+                button.style.display = "block";
+              });
+              currentActive = 2;
+              update();
+            }
+          });
+        }
+
+        // TODO : 업로드 버튼 클릭 시 영역 구현 필요
+        if (uploadBtn) {
+          // uploadBtn 클릭 이벤트 리스너
+          uploadBtn.addEventListener("click", (event) => {
+            // 버튼이 하나만 남아있는지 확인
+            const buttons = document.querySelectorAll(".btn");
+            if (buttons.length === 1) {
+              // 남은 버튼이 있을 때 클릭 이벤트를 발생시킴
+              buttons[0].click();
+              // currentActive를 업데이트
+              currentActive = 2;
+              // 타입 넘겨줌
+              koiOcr._ocrType = document.querySelector('input[type=radio][name=ocr_select]:checked').value;
+              // 프로그래스 바 업데이트
+              update();
+            } else {
+              // 버튼이 하나가 아닌 경우 startBtn 클릭 이벤트 처리
+              const menu_txt = document.querySelector(".menu_txt");
+              const menu_txt2 = document.querySelector(".menu_txt2");
+              const buttons = document.querySelectorAll(".btn");
+
+              menu_txt.style.display = "none";
+              menu_txt2.style.display = "none";
+              startBtn.style.display = "none";
+              uploadBtn.style.display = "none";
+              webCameraContainer.style.display = "none";
               buttons.forEach((button) => {
                 button.style.display = "block";
               });
