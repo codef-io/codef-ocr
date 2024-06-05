@@ -275,6 +275,46 @@ body {
   transition: 0.4s ease;
 }
 
+.flex-container {
+  display: flex;
+}
+
+.wrapper {
+  text-align: center;
+  flex-grow: 1;
+
+  .image-box {
+    width: 600px;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+    margin: 20px auto;
+  }
+
+  .text-box {
+    width: 600px;
+    height: 400px;
+    object-fit: cover;
+    display: block;
+    margin: 20px auto;
+    overflow: scroll;
+    word-wrap: break-word;
+    /*background-color: #f5d682;*/
+    border: 1px solid #ddd;
+  }
+
+  #upload_btn {
+    display: inline-block;
+    cursor: pointer;
+    transform: translateX(50%);
+    background-color: #005a9291;
+
+    input[type=file] {
+      display: none;
+    }
+  }
+}
+
 .circle {
   background-color: #fff;
   color: #999;
@@ -474,6 +514,29 @@ body {
   text-align: center;
 }
 
+.title_content{
+  display: flex;
+  align-items: center;
+  width: 100px;
+  height: 40px;
+}
+
+.txtfield{
+  flex: 1;
+  background-color: white;
+  width: 400px;
+  /*height: 38px;*/
+  font-size: 15px;
+  padding: 7px;
+  /*box-sizing: border-box;*/
+
+}
+
+.row {
+  display: flex;
+  padding: 10px 0;
+}
+
 @keyframes blink-effect {
   70% {
     opacity: 0;
@@ -490,6 +553,18 @@ body {
   display: none;
   height: calc(100% - 120px);
 }
+
+.contents-section.file-section {
+  display: none;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
+  /* overflow-y: scroll; */
+  flex-wrap: wrap;
+  align-content: center;
+  flex-direction: row;
+}
+
 
 #result_text {
   display: flex;
@@ -627,6 +702,28 @@ body {
 .btn2 > span {
   font-weight: bold;
   color: #fff;
+}
+
+#shot_btn {
+  display: block;
+  overflow-y: scroll;
+  position: fixed;
+  bottom: 0;
+  left: 27%;
+  transform: translateX(-50%);
+  background-color: #005a9291;
+  /* background: repeating-linear-gradient(133deg, #3498db, transparent); */
+}
+
+#file_btn {
+  display: block;
+  overflow-y: scroll;
+  position: fixed;
+  bottom: 0;
+  left: 73%;
+  transform: translateX(-50%);
+  background-color: #005a9291;
+  /* background: repeating-linear-gradient(133deg, #3498db, transparent); */
 }
 
 #start_btn {
