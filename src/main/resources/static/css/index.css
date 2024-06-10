@@ -286,7 +286,7 @@ body {
   .image-box {
     width: 600px;
     height: 400px;
-    object-fit: cover;
+    object-fit: contain;
     display: block;
     margin: 20px auto;
   }
