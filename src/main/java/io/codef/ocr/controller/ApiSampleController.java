@@ -32,7 +32,7 @@ public class ApiSampleController {
     	JSONParser parser = new JSONParser();
     	JSONObject jsonObject = (JSONObject) parser.parse(reqdata);
     	
-        returnData = sampleService.ocrAPI(jsonObject.get("base64Data").toString(), jsonObject.get("ocrType").toString());
+        returnData = sampleService.ocrAPI(jsonObject);
         
 		return returnData;
 	}

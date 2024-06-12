@@ -3,6 +3,7 @@ package io.codef.ocr.service;
 import java.io.IOException;
 import java.util.HashMap;
 
+import org.json.simple.JSONObject;
 import org.springframework.stereotype.Service;
 
 import io.codef.ocr.api.*;
@@ -22,7 +23,14 @@ import io.codef.ocr.api.EasyCodefServiceType;
 @Service
 public class ApiSampleService {
 
-	public String ocrAPI(String image, String type) throws InterruptedException, IOException {
+	public String ocrAPI(JSONObject jsonObject) throws InterruptedException, IOException {
+
+		String image = jsonObject.get("base64Data").toString();
+		String type = jsonObject.get("ocrType").toString();
+		String clientId = jsonObject.get("client_id").toString();
+		String clientSecret = jsonObject.get("client_secret").toString();
+		String publicKey = jsonObject.get("public_key").toString();
+
 		/**	
 		 * #1.쉬운 코드에프 객체 생성
 		 */
@@ -33,21 +41,21 @@ public class ApiSampleService {
 		 * - 데모 서비스 가입 후 코드에프 홈페이지에 확인 가능(https://codef.io/#/account/keys)
 		 * - 데모 서비스로 상품 조회 요청시 필수 입력 항목
 		 */
-		codef.setClientInfoForDemo(EasyCodefClientInfo.DEMO_CLIENT_ID, EasyCodefClientInfo.DEMO_CLIENT_SECRET);
+		codef.setClientInfoForDemo(clientId, clientSecret);
 		
 		/**	
 		 * #3.정식 클라이언트 정보 설정
 		 * - 정식 서비스 가입 후 코드에프 홈페이지에 확인 가능(https://codef.io/#/account/keys)
 		 * - 정식 서비스로 상품 조회 요청시 필수 입력 항목
 		 */
-		codef.setClientInfo(EasyCodefClientInfo.CLIENT_ID, EasyCodefClientInfo.CLIENT_SECRET);
+//		codef.setClientInfo(EasyCodefClientInfo.CLIENT_ID, EasyCodefClientInfo.CLIENT_SECRET);
 		
 		/**	
 		 * #4.RSA암호화를 위한 퍼블릭키 설정
 		 * - 데모/정식 서비스 가입 후 코드에프 홈페이지에 확인 가능(https://codef.io/#/account/keys)
 		 * - 암호화가 필요한 필드에 사용 - encryptValue(String plainText);
 		 */
-		codef.setPublicKey(EasyCodefClientInfo.PUBLIC_KEY);
+		codef.setPublicKey(publicKey);
 		
 		/**	
 		 * #5.요청 파라미터 설정
