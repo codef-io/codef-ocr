@@ -35,108 +35,114 @@
           </div>
         </div>
       </div>
-      <div class="menu-grid">
-        <div class="menu_txt">
-          <span>STEP 1</span>
-          <img src="./images/hand1.png" />
-          <span>ocr 종류를 선택해주세요.</span>
-        </div>
-        <div class="menu_txt2">
-          <span>STEP 2</span>
-          <img src="./images/ocr.png" />
-          <span
+      <div>
+        <div class="menu-grid">
+          <div class="menu_txt">
+            <span>STEP 1</span>
+            <img src="./images/hand1.png" />
+            <span>ocr 종류를 선택해주세요.</span>
+          </div>
+          <div class="menu_txt2">
+            <span>STEP 2</span>
+            <img src="./images/ocr.png" />
+            <span
             >대상을 가이드 영역 안에 맞추고 반사광을 최소화하여 촬영해주세요.</span
-          >
-        </div>
-      </div>
-      <div class="contents">
-        <div class="contents-section start-section">
-          <button id="idcard" class="btn">
-            <img src="./images/idcard_image.png" />
-          </button>
-          <div id="ocr_select" style="border: 0px; position: fixed; bottom: 25%;">
-            <label style="display: block;">
-              <input type="radio" value="1" name="ocr_select"> 주민등록증
-            </label>
-            <label style="display: block;">
-              <input type="radio" value="2" name="ocr_select"> 운전면허증
-            </label>
-            <label style="display: block;">
-              <input type="radio" value="3" name="ocr_select"> 여권
-            </label>
-            <label style="display: block;">
-              <input type="radio" value="4" name="ocr_select"> 외국인등록증
-            </label>
-            <label style="display: block;">
-              <input type="radio" value="5" name="ocr_select"> 외국인등록증 후면
-            </label>
+            >
           </div>
-          <div style="position: fixed; bottom: 10%;">
-            <div class="row">
-              <span class="title_content">client_id</span>
-              <input class="txtfield" type="text" name="client_id" id="client_id">
+        </div>
+        <div class="contents" style="margin-top: 5%">
+          <div class="contents-section start-section" style="position: relative; top: 55%">
+            <button id="idcard" class="btn">
+              <img src="./images/idcard_image.png" />
+            </button>
+            <div id="ocr_select" style="border: 0px;">
+              <label style="display: block;">
+                <input type="radio" value="1" name="ocr_select"> 주민등록증
+              </label>
+              <label style="display: block;">
+                <input type="radio" value="2" name="ocr_select"> 운전면허증
+              </label>
+              <label style="display: block;">
+                <input type="radio" value="3" name="ocr_select"> 여권
+              </label>
+              <label style="display: block;">
+                <input type="radio" value="4" name="ocr_select"> 외국인등록증
+              </label>
+              <label style="display: block;">
+                <input type="radio" value="5" name="ocr_select"> 외국인등록증 후면
+              </label>
             </div>
-            <div class="row">
-              <span class="title_content">client_secret</span>
-              <input class="txtfield" type="text" name="client_secret" id="client_secret">
-            </div>
-            <div class="row">
-              <span class="title_content">public_key</span>
-              <input class="txtfield" type="text" name="public_key" id="public_key">
-            </div>
-          </div>
-          <div>
-            <button id="shot_btn" class="btn2">
-              <span>촬영</span>
-            </button>
-          </div>
-          <div>
-            <button id="file_btn" class="btn2">
-              <span>파일</span>
-            </button>
-          </div>
 
-        </div>
-
-
-        <div id="webcamera_container" class="contents-section camera-section">
-          <p class="title"></p>
-        </div>
-        <div class="contents-section result-section">
-          <div id="title_text"></div>
-          <div id="imageContainer"></div>
-          <div id="result_text"></div>
-          <div class="btn-area">
-            <button id="retry_btn" class="btn2">
-              <span>재촬영</span>
-            </button>
-            <button id="back_btn" class="btn2">
-              <span>되돌아가기</span>
-            </button>
-          </div>
-        </div>
-        <button id="cap_btn" class="btn3">
-          <div class="inner-circle"></div>
-        </button>
-
-
-        <div class="contents-section file-section">
-          <div class="flex-container">
-            <div class="wrapper">
-              <img src="https://i0.wp.com/adventure.co.kr/wp-content/uploads/2020/09/no-image.jpg" class="image-box" />
-              <div class="text-box" id="base64-box">
+            <div>
+              <div class="row">
+                <span class="title_content">client_id</span>
+                <input class="txtfield" type="text" name="client_id" id="client_id">
               </div>
+              <div class="row">
+                <span class="title_content">client_secret</span>
+                <input class="txtfield" type="text" name="client_secret" id="client_secret">
+              </div>
+              <div class="row">
+                <span class="title_content">public_key</span>
+                <input class="txtfield" type="text" name="public_key" id="public_key">
+              </div>
+            </div>
+            <div>
+              <button id="shot_btn" class="btn2">
+                <span>촬영</span>
+              </button>
+            </div>
+            <div>
+              <button id="file_btn" class="btn2">
+                <span>파일</span>
+              </button>
+            </div>
+
+          </div>
+
+
+          <div id="webcamera_container" class="contents-section camera-section">
+            <p class="title"></p>
+          </div>
+          <div class="contents-section result-section">
+            <div id="title_text"></div>
+            <div id="imageContainer"></div>
+            <div id="result_text"></div>
+            <div class="btn-area">
+              <button id="retry_btn" class="btn2">
+                <span>재촬영</span>
+              </button>
+              <button id="back_btn" class="btn2">
+                <span>되돌아가기</span>
+              </button>
+            </div>
+          </div>
+          <button id="cap_btn" class="btn3">
+            <div class="inner-circle"></div>
+          </button>
+
+
+          <div class="contents-section file-section">
+            <div class="flex-container">
+              <div class="wrapper">
+                <img src="https://i0.wp.com/adventure.co.kr/wp-content/uploads/2020/09/no-image.jpg" class="image-box" />
+                <div class="text-box" id="base64-box">
+                </div>
                 <label for="file" id="upload_btn" class="btn2">
                   <input id="file" type="file" accept="image/*" />
                   <span>업로드</span>
                 </label>
+              </div>
             </div>
-          </div>
             <button id="start_btn" class="btn2">
               <span>실행</span>
             </button>
+          </div>
         </div>
+
       </div>
+
+
     </div>
 
     <script src="js/adapter-latest.js"></script>
@@ -316,7 +322,7 @@
         const reader = new FileReader();
         reader.onload = ({ target }) => {
           previews[0].src = target.result;
-          base64.innerHTML = previews[0].src;
+          base64.innerText = previews[0].src;
         };
         reader.readAsDataURL(fileDOM.files[0]);
       });

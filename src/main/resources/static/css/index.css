@@ -168,8 +168,8 @@ p {
   position: absolute;
   font-family: "Spoqa Han Sans Neo", "sans-serif";
   color: #707170;
-  overflow: scroll;
-  overflow-x: hidden;
+  /*overflow: scroll;*/
+  /*overflow-x: hidden;*/
 }
 
 .content {
@@ -277,23 +277,33 @@ body {
 
 .flex-container {
   display: flex;
+  position: relative;
+  width: 100%;
+  height: 0;
+  padding-bottom: 70%;
 }
 
 .wrapper {
   text-align: center;
   flex-grow: 1;
+  position: absolute;
+  width: 100%;
+  height: 65%;
+  top: 0;
+  left: 0;
 
   .image-box {
-    width: 600px;
-    height: 400px;
+    width: 50%;
+    height: 50%;
     object-fit: contain;
     display: block;
     margin: 20px auto;
+    max-width: fit-content;
   }
 
   .text-box {
-    width: 600px;
-    height: 400px;
+    width: 50%;
+    height: 50%;
     object-fit: cover;
     display: block;
     margin: 20px auto;
@@ -383,7 +393,8 @@ body {
 
 .menu_txt {
   font-size: larger;
-  margin-top: 5%;
+  margin-top: 3%;
+  width: 50%;
   /* text-align: left; */
 }
 
@@ -413,7 +424,7 @@ body {
 
 /* 두 번째 span에 대한 스타일 */
 .menu_txt span:nth-child(3) {
-  margin-top: 20px;
+  /*margin-top: 20px;*/
   text-align: center;
   font-weight: bold;
   font-size: 15px;
@@ -446,7 +457,7 @@ body {
 
 /* 두 번째 span에 대한 스타일 */
 .menu_txt2 span:nth-child(3) {
-  margin-top: 20px;
+  /*margin-top: 20px;*/
   text-align: center;
   font-weight: bold;
   font-size: 15px;
@@ -460,19 +471,19 @@ body {
 
 .contents {
   width: 100%;
-  height: 100%;
-  position: absolute;
+  /*height: 100%;*/
+  /*position: absolute;*/
 }
 
 .contents-section.start-section {
   display: none;
   height: 100%;
-  justify-content: center;
+  /*justify-content: flex-end;*/
   align-items: center;
   /* overflow-y: scroll; */
   flex-wrap: wrap;
   align-content: center;
-  flex-direction: row;
+  flex-direction: column;
 }
 
 .webcamera_container {
@@ -524,9 +535,9 @@ body {
 .txtfield{
   flex: 1;
   background-color: white;
-  width: 400px;
+  width: 200px;
   /*height: 38px;*/
-  font-size: 15px;
+  font-size: 10px;
   padding: 7px;
   /*box-sizing: border-box;*/
 
@@ -894,11 +905,11 @@ ot {
   }
 
   .menu-grid {
-    display: grid;
-    position: fixed;
+    display: flex;
+    /*position: fixed;*/
     top: 10%;
     left: 50%;
-    transform: translate(-50%);
+    /*transform: translate(-50%);*/
   }
 
   .content {
@@ -906,13 +917,13 @@ ot {
   }
 
   .menu_txt {
-    margin-top: 50px; /* Adjust the margin for menu_txt in landscape */
-    width: 100%;
+    margin-top: 30px; /* Adjust the margin for menu_txt in landscape */
+    width: 50%;
   }
 
   .menu_txt2 {
     margin-top: 0;
-    width: 100%;
+    width: 50%;
   }
 
   /* .btn {
@@ -935,14 +946,16 @@ ot {
 
   .menu-grid {
     display: grid;
-    position: fixed;
+    /*position: fixed;*/
     top: 10%;
     left: 50%;
-    transform: translate(-50%);
+    /*transform: translate(-50%);*/
+    grid-template-columns: repeat(2, 50%);
+    justify-content: center;
   }
 
   .menu_txt {
-    margin-top: 50px; /* Adjust the margin for menu_txt in landscape */
+    /*margin-top: 50px; !* Adjust the margin for menu_txt in landscape *!*/
     width: 100%;
   }
 
@@ -964,11 +977,11 @@ ot {
 
 @media screen  and (min-height: 1024px) {
   .menu-grid {
-    display: grid;
-    position: fixed;
-    top: 30%;
+    display: flex;
+    /*position: fixed;*/
+    /*top: 30%;*/
     left: 50%;
-    transform: translate(-50%);
+    /*transform: translate(-50%);*/
   }
 }
 
