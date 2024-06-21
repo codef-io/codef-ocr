@@ -500,6 +500,102 @@ class KoiOcr extends EventTarget {
     }
   }
 
+  async process_T(ocrType,
+                  client_id,
+                  client_secret,
+                  public_key) {
+    // const imageData = data.imageData;
+    // const imageWidth = data.imageWidth;
+    // const imageHeight = data.imageHeight;
+    // const totalCount = data.totalCount;
+    // const currentCount = data.currentCount;
+    //
+    const eventDetail = {
+      success: false,
+      imageData: null,
+      imageWidth: 640,
+      imageHeight: 400,
+      ocrResult: null,
+      upload : true
+    };
+
+    try {
+      const eventType = await this.processOCR_T(
+          ocrType,
+          client_id,
+          client_secret,
+          public_key,
+          eventDetail
+      );
+      this.dispatchEvent(new CustomEvent(eventType, { detail: eventDetail }));
+      return eventType == KOI_OCR_EVENT.RESULT;
+    } catch (error) {
+      console.error("Error processing image:", error.message);
+      // 적절한 에러 처리 추가
+    }
+  }
+
+  // 호출 테스트
+  async processOCR_T(
+      ocrType,
+      client_id,
+      client_secret,
+      public_key,
+      eventDetail
+
+  ) {
+      const result = await new Promise((resolve, reject) => {
+
+        let base64 = document.getElementById("base64-box");
+
+
+        const base64String = base64.innerText;
+        const base64Data = base64String;
+        console.log("this._ocrWorker = " + this._ocrWorker.toString());
+        if (this._ocrWorker) {
+          this._ocrWorker.postMessage({ ocrType, base64Data, client_id, client_secret, public_key });
+          this._ocrWorker.onmessage = (e) => {
+            if (e.data.type === "ocrResult") {
+              const result = e.data.message;
+              console.log("result: ", result);
+              resolve(result); // 워커로부터의 응답을 전달하여 Promise를 해결
+            }
+          };
+        } else {
+          resolve(null);
+        }
+      });
+
+      return this.processOCRResult_T(
+          result,
+          eventDetail,
+          1,
+          1
+      );
+  }
+
+  processOCRResult_T(result, eventDetail, currentCount, totalCount) {
+    // if (result) {
+      eventDetail.ocrResult = result;
+    // }
+      const successEvent = new CustomEvent("ocrsuccess", { detail: 0 });
+      this._webCamera.dispatchEvent(successEvent);
+
+      if (currentCount >= totalCount) {
+        // All images processed
+        let savedImageData;
+
+        // ocr 마지막 시도차 이미지 저장
+        // if (imageData) {
+        //   savedImageData = convertImageDataToBase64(imageData);
+        // }
+        return KOI_OCR_EVENT.RESULT;
+      } else {
+        // OCR in progress, emit PROGRESS event
+        return KOI_OCR_EVENT.PROGRESS;
+      }
+  }
+
   processOCRResult(result, eventDetail, totalCount, currentCount, imageData) {
     if (result && result.resultJSON) {
       eventDetail.ocrResult = result;

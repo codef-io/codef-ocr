@@ -36,7 +36,7 @@
         </div>
       </div>
       <div>
-        <div class="menu-grid">
+        <div class="menu-grid" style="margin-bottom: 5%">
           <div class="menu_txt">
             <span>STEP 1</span>
             <img src="./images/hand1.png" />
@@ -50,7 +50,7 @@
             >
           </div>
         </div>
-        <div class="contents" style="margin-top: 5%">
+        <div class="contents">
           <div class="contents-section start-section" style="position: relative; top: 55%">
             <button id="idcard" class="btn">
               <img src="./images/idcard_image.png" />
@@ -106,16 +106,19 @@
           </div>
           <div class="contents-section result-section">
             <div id="title_text"></div>
-            <div id="imageContainer"></div>
-            <div id="result_text"></div>
-            <div class="btn-area">
+            <div>
+              <div id="imageContainer"></div>
+              <div id="result_text"></div>
+            </div>
               <button id="retry_btn" class="btn2">
                 <span>재촬영</span>
+              </button>
+              <button id="reupload_btn" class="btn2">
+                <span>재시도</span>
               </button>
               <button id="back_btn" class="btn2">
                 <span>되돌아가기</span>
               </button>
-            </div>
           </div>
           <button id="cap_btn" class="btn3">
             <div class="inner-circle"></div>
@@ -123,12 +126,15 @@
 
 
           <div class="contents-section file-section">
+            <div>
+              <p class="title" id="start_title"></p>
+            </div>
             <div class="flex-container">
               <div class="wrapper">
                 <img src="https://i0.wp.com/adventure.co.kr/wp-content/uploads/2020/09/no-image.jpg" class="image-box" />
                 <div class="text-box" id="base64-box">
                 </div>
-                <label for="file" id="upload_btn" class="btn2">
+                <label for="file" id="upload_btn" class="btn2" style= "line-height: 50px;">
                   <input id="file" type="file" accept="image/*" />
                   <span>업로드</span>
                 </label>
@@ -164,7 +170,7 @@
       let currentOcrType = null;
       let titleEl;
       let initialState;
-      let shotBtn, fileBtn, captureBtn, startBtn, retryBtn, backBtn;
+      let shotBtn, fileBtn, captureBtn, startBtn, retryBtn, backBtn, reuploadBtn;
       let useCapOcr = true;
       let currentActive = 1;
       let imageDataURL;
@@ -200,6 +206,10 @@
               koiOcr._client_id = document.querySelector('#client_id').value;
               koiOcr._client_secret = document.querySelector('#client_secret').value;
               koiOcr._public_key = document.querySelector('#public_key').value;
+
+
+              const menu_grid = document.querySelector(".menu-grid");
+              menu_grid.style.display = "none";
 
               // 프로그래스 바 업데이트
               update();
@@ -263,14 +273,16 @@
         if (startBtn) {
           startBtn.addEventListener("click", (event) => {
             // koiOcr.dispatchEvent(new CustomEvent("capture"));
-            const titleEl = document.querySelector(".title");
+            const titleEl = document.getElementById("start_title");
             activateCircle(1);
             // titleEl.innerHTML = "";
             titleEl.innerText = "ocr 진행중입니다.\n잠시만 기다려주세요.";
             startBtn.style.display = "none";
-            document.querySelector(".contents-section.file-section").style.display = "none";
+            document.querySelector(".flex-container").style.display = "none";
             currentActive = 4;
             update();
+
+            koiOcr.process_T(koiOcr._ocrType,koiOcr._client_id ,koiOcr._client_secret , koiOcr._public_key)
           });
         }
 
@@ -286,6 +298,22 @@
             currentActive = 3;
             update();
             kwcGuideArea.style.zIndex = "10001";
+          });
+        }
+
+        reuploadBtn = document.querySelector("#reupload_btn");
+        if (reuploadBtn) {
+          reuploadBtn.addEventListener("click", (event) => {
+            const kwcGuideArea = document.getElementById("kwcGuideArea");
+            titleEl.innerHTML = "";
+            // if (currentOcrType) {
+            //   startOcr(currentOcrType);
+            // }
+            activateCircle(3);
+            currentActive = 3;
+            update();
+            kwcGuideArea.style.zIndex = "10001";
+            changeContentViewStack("file");
           });
         }
 
@@ -308,7 +336,17 @@
             pgTexts.forEach((pgText) => {
             pgText.style.bottom = "";
             pgText.style.top = "";
-          });
+
+            // 이미지 삭제
+            const previews = document.querySelectorAll('.image-box');
+            let base64 = document.getElementById("base64-box");
+            base64.innerText = "";
+            previews[0].src = "https://i0.wp.com/adventure.co.kr/wp-content/uploads/2020/09/no-image.jpg";
+            // document.querySelector('#client_id').value = "";
+            // document.querySelector('#client_secret').value = "";
+            // document.querySelector('#public_key').value = "";
+
+            });
           });
         }
       }
@@ -322,7 +360,7 @@
         const reader = new FileReader();
         reader.onload = ({ target }) => {
           previews[0].src = target.result;
-          base64.innerText = previews[0].src;
+          base64.innerText = previews[0].src.replace(/^data:image\/[a-z]+;base64,/, "");
         };
         reader.readAsDataURL(fileDOM.files[0]);
       });
@@ -402,13 +440,18 @@
 
         result_text.style.height = "30%";
         const canvas = document.createElement("canvas");
-        canvas.width = event.detail.imageData.width;
-        canvas.height = event.detail.imageData.height;
-        const context = canvas.getContext("2d");
-        context.putImageData(event.detail.imageData, 0, 0);
+        if (event.detail.imageData == null) {
+          imageDataURL = "data:image/;base64,"+ base64.innerText;
+        } else {
+          canvas.width = event.detail.imageData.width;
+          canvas.height = event.detail.imageData.height;
+          const context = canvas.getContext("2d");
+          context.putImageData(event.detail.imageData, 0, 0);
 
-        // Canvas를 이미지로 변환하여 표시
-        imageDataURL = canvas.toDataURL("image/jpeg");
+          // Canvas를 이미지로 변환하여 표시
+          imageDataURL = canvas.toDataURL("image/jpeg");
+        }
+
 
         if (titleEl) {
           if (
@@ -429,7 +472,11 @@
             "Result element is null. Check if #title_text exists in your HTML."
           );
         }
-        retryBtn.style.display = "block";
+        if (event.detail.upload) {
+          reuploadBtn.style.display = "block";
+        } else {
+          retryBtn.style.display = "block";
+        }
         backBtn.style.display = "block";
         captureBtn.style.display = "none";
       };
@@ -520,6 +567,11 @@
           elementsToHide.forEach((element) => {
             element.style.display = "none";
           });
+          startBtn.style.display = "block";
+          const titleEl = document.getElementById("start_title");
+          // activateCircle(1);
+          titleEl.innerHTML = "";
+          document.querySelector(".flex-container").style.display = "block";
         }
 
         document.querySelector(`.${sectionName}-section`).style.display =

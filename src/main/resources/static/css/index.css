@@ -288,22 +288,23 @@ body {
   flex-grow: 1;
   position: absolute;
   width: 100%;
-  height: 65%;
+  height: 100%;
   top: 0;
   left: 0;
 
   .image-box {
-    width: 50%;
-    height: 50%;
+    width: 80%;
+    height: 80%;
     object-fit: contain;
     display: block;
     margin: 20px auto;
-    max-width: fit-content;
+    max-width: 600px;
+    max-height: 500px;
   }
 
   .text-box {
-    width: 50%;
-    height: 50%;
+    width: 60%;
+    height: 100px;
     object-fit: cover;
     display: block;
     margin: 20px auto;
@@ -314,9 +315,10 @@ body {
   }
 
   #upload_btn {
+    width: 20%;
+    margin: auto;
     display: inline-block;
     cursor: pointer;
-    transform: translateX(50%);
     background-color: #005a9291;
 
     input[type=file] {
@@ -511,13 +513,20 @@ body {
   /* animation: blink-effect 1s cubic-bezier(0.4, 0, 1, 1) infinite;  */
 }
 
+.contents-section.file-section.title {
+  font-family: "NEXON Lv1 Gothic OTF";
+  font-weight: bold;
+  font-size: 1.25rem;
+  /* animation: blink-effect 1s cubic-bezier(0.4, 0, 1, 1) infinite;  */
+}
+
 .title {
   position: absolute;
   z-index: 10005;
   color: #005a92;
   font-family: "NEXON Lv1 Gothic OTF";
   /* margin-left: 5%; */
-  margin-top: 25%; /* 중앙 정렬을 위해 마진을 조정합니다. */
+  margin-top: 15%; /* 중앙 정렬을 위해 마진을 조정합니다. */
   left: 50%; /* 왼쪽 여백을 조정합니다. */
   width: 300px;
   transform: translate(-50%, -50%); /* 수평 및 수직으로 중앙에 정렬합니다. */
@@ -537,8 +546,8 @@ body {
   background-color: white;
   width: 200px;
   /*height: 38px;*/
-  font-size: 10px;
-  padding: 7px;
+  font-size: 15px;
+  padding: 3px;
   /*box-sizing: border-box;*/
 
 }
@@ -556,6 +565,7 @@ body {
 .contents-section.result-section {
   display: none;
   height: calc(100% - 120px);
+  text-align: center;
   /* overflow: hidden;
   overflow-y: scroll; */
 }
@@ -589,7 +599,7 @@ body {
   text-align: center;
   word-wrap: break-word;
   z-index: 10001;
-  margin-top: 10%;
+  margin-top: 5%;
 }
 
 #result_text > div {
@@ -643,12 +653,15 @@ body {
 #imageContainer {
   display: flex;
   justify-content: center;
-  margin-top: 25%;
+  max-width: 600px;
+  margin: auto;
+  margin-top: 10%;
 }
 
 #imageContainer img {
   max-width: 80%;
   height: auto;
+  max-height: 80%
 }
 
 /* 기본 버튼 스타일 */
@@ -750,12 +763,31 @@ body {
 
 #retry_btn {
   display: none;
-  z-index: 1;
+  overflow-y: scroll;
+  position: fixed;
+  bottom: 0;
+  left: 27%;
+  transform: translateX(-50%);
+  background-color: #005a9291;
+}
+
+#reupload_btn {
+  display: none;
+  overflow-y: scroll;
+  position: fixed;
+  bottom: 0;
+  left: 27%;
+  transform: translateX(-50%);
   background-color: #005a9291;
 }
 
 #back_btn {
-  z-index: 2;
+  display: none;
+  overflow-y: scroll;
+  position: fixed;
+  bottom: 0;
+  left: 73%;
+  transform: translateX(-50%);
   background-color: #005a9291;
 }
 
